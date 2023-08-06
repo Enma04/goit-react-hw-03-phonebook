@@ -30,8 +30,10 @@ export class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
-    //this.handleValidate = this.handleValidate.bind(this);
   }
+
+  //------------------------------------------------------------------------
+  //------------------- METODOS
 
   handleDelete(e) {
     console.log("event: ", e);
@@ -65,6 +67,14 @@ export class App extends Component {
     } else {
       const id = nanoid();
       contacts.push({ name, number, id });
+
+      //------------------------------------------------------------------------
+      //-------------------- LOCALES TORAGE
+      localStorage.setItem(`${ id }`, JSON.stringify( { name, number, id } ));
+      const miStorage = JSON.parse(localStorage.getItem( `${id}` ));
+      console.log("LocaleStorage actual: ", miStorage);
+      //------------------------------------------------------------------------
+      //------------------------------------------------------------------------
     }
     this.handleReset(evt);
   };
@@ -77,6 +87,15 @@ export class App extends Component {
     );
     this.setState({ contactsFiltered: aux });
   }
+
+  //------------------------------------------------------------------------
+  //------------------- METODOS DE LA CLASE COMPONENT
+  componentDidMount() {}
+
+  componentDidUpdate() {}
+
+  //------------------------------------------------------------------------
+  //------------------- METODO RENDER
 
   render() {
     return (
