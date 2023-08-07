@@ -24,12 +24,17 @@ export class App extends Component {
       contactsFiltered: [],
       name: '',
       number: '',
+      submitted: false,
     };
+
     this.handleDelete = this.handleDelete.bind(this);
     this.handleReset = this.handleReset.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
+    this.handleChargeContacts = this.handleChargeContacts.bind(this);
+
+    this.handleChargeContacts();
   }
 
   //------------------------------------------------------------------------
@@ -41,8 +46,9 @@ export class App extends Component {
     const name = e.target.parentNode.firstChild.data;
     if (contacts.map(item => item.name).includes(name)) {
       const position = contacts.findIndex( contact => contact.name === name );
-      contacts.splice(position, 1);
-      this.setState({ contacts });
+      const key = contacts[position].id;
+      localStorage.removeItem(key);
+      this.setState({ submitted: true });
     }
   }
 
@@ -62,19 +68,16 @@ export class App extends Component {
   handleSubmit = evt => {
     evt.preventDefault();
     const { name, number, contacts } = this.state;
+
     if (contacts.map(item => item.name).includes(name)) {
       alert('El contacto ya existe');
-    } else {
+    }
+    else {
       const id = nanoid();
-      contacts.push({ name, number, id });
-
-      //------------------------------------------------------------------------
-      //-------------------- LOCALES TORAGE
+      this.setState( {submitted: true} );
       localStorage.setItem(`${ id }`, JSON.stringify( { name, number, id } ));
       const miStorage = JSON.parse(localStorage.getItem( `${id}` ));
-      console.log("LocaleStorage actual: ", miStorage);
-      //------------------------------------------------------------------------
-      //------------------------------------------------------------------------
+      console.log("Guardado en LocaleStorage! ", miStorage);
     }
     this.handleReset(evt);
   };
@@ -88,11 +91,26 @@ export class App extends Component {
     this.setState({ contactsFiltered: aux });
   }
 
+  handleChargeContacts() {
+    const { contacts } = this.state;
+    let keys = Object.keys(localStorage);
+
+    for(let key of keys) {
+      if (!contacts.map(item => item.id).includes(key))
+      contacts.push( JSON.parse( localStorage.getItem(key) ));
+    }
+  }
+
   //------------------------------------------------------------------------
   //------------------- METODOS DE LA CLASE COMPONENT
-  componentDidMount() {}
-
-  componentDidUpdate() {}
+  componentDidUpdate( prevProps, prevState ) {
+    if(this.state.submitted) {
+      this.handleChargeContacts();
+      this.setState( { submitted: false } );
+      return true;
+    }
+    else { return false; }
+  }
 
   //------------------------------------------------------------------------
   //------------------- METODO RENDER
