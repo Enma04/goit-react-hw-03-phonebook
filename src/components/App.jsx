@@ -3,6 +3,7 @@ import css from './App.module.css';
 import { nanoid } from 'nanoid';
 import ContactForm from './ContactForm/ContactForm';
 import Filter from './Filter/Filter';
+import Swal from 'sweetalert2';
 
 const INITIAL_STATE = {
   name: '',
@@ -41,15 +42,14 @@ export class App extends Component {
   //------------------- METODOS
 
   handleDelete(e) {
-    console.log("event: ", e);
-    const { contacts } = this.state;
     const name = e.target.parentNode.firstChild.data;
-    if (contacts.map(item => item.name).includes(name)) {
-      const position = contacts.findIndex( contact => contact.name === name );
-      const key = contacts[position].id;
-      localStorage.removeItem(key);
-      this.setState({ submitted: true });
-    }
+    this.setState( (prevState) => (
+      {
+        contacts: [...prevState.contacts.filter( item => item.name !== name )],
+        contactsFiltered: [...prevState.contactsFiltered.filter( item => item.name !== name )]
+      }
+    ));
+    Swal.fire(`${name} eliminado!`);
   }
 
   handleReset = e => {
@@ -59,10 +59,10 @@ export class App extends Component {
   };
 
   handleChange = evt => {
-    const name = evt.target.name;
-    const value = evt.target.value;
-    if (name === 'name') this.setState({ name: value });
-    if (name === 'number') this.setState({ number: value });
+    const {name, value} = evt.target;
+    this.setState( () => ({
+      [name]: value,
+    }));
   };
 
   handleSubmit = evt => {
