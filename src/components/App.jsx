@@ -31,8 +31,9 @@ export class App extends Component {
   //------------------------------------------------------------------------
   //------------------- METODOS DE LA CLASE COMPONENT
   componentDidMount() {
-    const localeContacts = JSON.parse( localStorage.getItem("contacts") );
-    if(localeContacts.length > 0) {
+    //console.log( JSON.parse( localStorage.getItem("contacts")).length );
+    if(JSON.parse( localStorage.getItem("contacts")).length > 0) {
+      const localeContacts = JSON.parse( localStorage.getItem("contacts") );
       this.setState(() => ({
         contacts: [...localeContacts],
       }));
