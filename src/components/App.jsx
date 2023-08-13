@@ -14,18 +14,10 @@ export class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contacts: [
-        { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-        { id: 'id-9', name: 'Rosie Carmen', number: '459-12-56' },
-        { id: 'id-7', name: 'rosie Fernando', number: '459-12-56' },
-        { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-        { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-        { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-      ],
+      contacts: [],
       contactsFiltered: [],
       name: '',
       number: '',
-      submitted: false,
     };
 
     this.handleDelete = this.handleDelete.bind(this);
@@ -33,14 +25,29 @@ export class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
-    this.handleChargeContacts = this.handleChargeContacts.bind(this);
-
-    this.handleChargeContacts();
   }
+
+
+  //------------------------------------------------------------------------
+  //------------------- METODOS DE LA CLASE COMPONENT
+  componentDidMount() {
+    const localeContacts = JSON.parse( localStorage.getItem("contacts") );
+    this.setState(() => ({
+      contacts: [...localeContacts],
+    }));
+  }
+
+  componentDidUpdate( prevProps, prevState ) {
+    const { contacts } = this.state;
+    if(prevState.contacts !== contacts) {
+      localStorage.setItem("contacts", JSON.stringify( contacts ));
+      const miStorage = JSON.parse(localStorage.getItem( `contacts` ));
+    }
+  }
+
 
   //------------------------------------------------------------------------
   //------------------- METODOS
-
   handleDelete(e) {
     const name = e.target.parentNode.firstChild.data;
     this.setState( (prevState) => (
@@ -76,11 +83,10 @@ export class App extends Component {
       Swal.fire('Este numero ya esta agregado!');
     }
     else {
-      const id = nanoid();
-      this.setState( {submitted: true} );
-      localStorage.setItem(`${ id }`, JSON.stringify( { name, number, id } ));
-      const miStorage = JSON.parse(localStorage.getItem( `${id}` ));
-      console.log("Guardado en LocaleStorage! ", miStorage);
+      const id = "id-" + contacts.length + "-" + nanoid(2);
+      this.setState( prevState => ({
+        contacts: [...prevState.contacts, {id, name, number}],
+      }));
     }
     this.handleReset(evt);
   };
@@ -94,30 +100,9 @@ export class App extends Component {
     this.setState({ contactsFiltered: aux });
   }
 
-  handleChargeContacts() {
-    const { contacts } = this.state;
-    let keys = Object.keys(localStorage);
-
-    for(let key of keys) {
-      if (!contacts.map(item => item.id).includes(key))
-      contacts.push( JSON.parse( localStorage.getItem(key) ));
-    }
-  }
-
-  //------------------------------------------------------------------------
-  //------------------- METODOS DE LA CLASE COMPONENT
-  componentDidUpdate( prevProps, prevState ) {
-    if(this.state.submitted) {
-      this.handleChargeContacts();
-      this.setState( { submitted: false } );
-      return true;
-    }
-    else { return false; }
-  }
 
   //------------------------------------------------------------------------
   //------------------- METODO RENDER
-
   render() {
     return (
       <div className={css.container}>
