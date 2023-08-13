@@ -70,7 +70,10 @@ export class App extends Component {
     const { name, number, contacts } = this.state;
 
     if (contacts.map(item => item.name).includes(name)) {
-      alert('El contacto ya existe');
+      Swal.fire('El contacto ya existe!');
+    }
+    else if (contacts.map(item => item.number).includes(number)) {
+      Swal.fire('Este numero ya esta agregado!');
     }
     else {
       const id = nanoid();
