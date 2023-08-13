@@ -32,7 +32,7 @@ export class App extends Component {
   //------------------- METODOS DE LA CLASE COMPONENT
   componentDidMount() {
     //console.log( JSON.parse( localStorage.getItem("contacts")).length );
-    if(JSON.parse( localStorage.getItem("contacts")).length > 0) {
+    if(JSON.parse( localStorage.getItem("contacts")).length !== null) {
       const localeContacts = JSON.parse( localStorage.getItem("contacts") );
       this.setState(() => ({
         contacts: [...localeContacts],
