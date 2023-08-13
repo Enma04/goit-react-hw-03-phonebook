@@ -41,7 +41,7 @@ export class App extends Component {
     const { contacts } = this.state;
     if(prevState.contacts !== contacts) {
       localStorage.setItem("contacts", JSON.stringify( contacts ));
-      const miStorage = JSON.parse(localStorage.getItem( `contacts` ));
+      //const miStorage = JSON.parse(localStorage.getItem( `contacts` ));
     }
   }
 
