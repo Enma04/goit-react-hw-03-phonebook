@@ -32,9 +32,11 @@ export class App extends Component {
   //------------------- METODOS DE LA CLASE COMPONENT
   componentDidMount() {
     const localeContacts = JSON.parse( localStorage.getItem("contacts") );
-    this.setState(() => ({
-      contacts: [...localeContacts],
-    }));
+    if(localeContacts.length > 0) {
+      this.setState(() => ({
+        contacts: [...localeContacts],
+      }));
+    }
   }
 
   componentDidUpdate( prevProps, prevState ) {
