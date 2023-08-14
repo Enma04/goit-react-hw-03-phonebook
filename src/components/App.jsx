@@ -31,7 +31,6 @@ export class App extends Component {
   //------------------------------------------------------------------------
   //------------------- METODOS DE LA CLASE COMPONENT
   componentDidMount() {
-    //console.log( JSON.parse( localStorage.getItem("contacts")).length );
     if(JSON.parse( localStorage.getItem("contacts")) !== null) {
       const localeContacts = JSON.parse( localStorage.getItem("contacts") );
       this.setState(() => ({
@@ -44,7 +43,6 @@ export class App extends Component {
     const { contacts } = this.state;
     if(prevState.contacts !== contacts) {
       localStorage.setItem("contacts", JSON.stringify( contacts ));
-      //const miStorage = JSON.parse(localStorage.getItem( `contacts` ));
     }
   }
 
