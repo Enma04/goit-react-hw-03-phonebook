@@ -11,12 +11,14 @@ export class App extends Component {
     super(props);
     this.state = {
       contacts: [],
+      filter: "",
       contactsFiltered: [],
     };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
+    this.setContacts = this.setContacts.bind(this);
   }
 
 
@@ -35,6 +37,9 @@ export class App extends Component {
     const { contacts } = this.state;
     if(prevState.contacts !== contacts) {
       localStorage.setItem("contacts", JSON.stringify( contacts ));
+    }
+    if(prevState.filter !== "") {
+      this.setContacts();
     }
   }
 
@@ -71,15 +76,18 @@ export class App extends Component {
     
   };
 
-  handleFilter(evt) {
-    const value = evt.target.value;
-    const { contacts } = this.state;
+  handleFilter(filter) {
+    this.setState({ filter });
+    /* const { contacts } = this.state;
     const aux = contacts.filter(item =>
       item.name.toLowerCase().includes(value.toLowerCase())
     );
-    this.setState({ contactsFiltered: aux });
+    this.setState({ contactsFiltered: aux }); */
   }
 
+  setContacts(){
+    console.log('Cambios en el filtro');
+  }
 
   //------------------------------------------------------------------------
   //------------------- METODO RENDER

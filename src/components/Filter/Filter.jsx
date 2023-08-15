@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import css from '../App.module.css';
 
 export default class Filter extends Component {
+  changeFilter(e) {this.props.handleFilter(e.target.value);}
+  
   render() {
     return (
       <>
@@ -11,7 +13,7 @@ export default class Filter extends Component {
           type="text"
           name="filter"
           className={css.inputFilter}
-          onChange={this.props.handleFilter}
+          onChange={this.changeFilter}
         />
         <ul className={css.contactList}>
           {this.props.contactsFiltered.length !== 0
