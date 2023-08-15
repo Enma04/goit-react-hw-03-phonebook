@@ -5,10 +5,6 @@ import ContactForm from './ContactForm/ContactForm';
 import Filter from './Filter/Filter';
 import Swal from 'sweetalert2';
 
-const INITIAL_STATE = {
-  name: '',
-  number: '',
-};
 
 export class App extends Component {
   constructor(props) {
@@ -16,13 +12,9 @@ export class App extends Component {
     this.state = {
       contacts: [],
       contactsFiltered: [],
-      name: '',
-      number: '',
     };
 
     this.handleDelete = this.handleDelete.bind(this);
-    this.handleReset = this.handleReset.bind(this);
-    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
   }
@@ -60,36 +52,23 @@ export class App extends Component {
     Swal.fire(`${name} eliminado!`);
   }
 
-  handleReset = e => {
-    this.setState({ ...INITIAL_STATE });
-    e.target[0].value = '';
-    e.target[1].value = '';
-  };
-
-  handleChange = evt => {
-    const {name, value} = evt.target;
-    this.setState( () => ({
-      [name]: value,
-    }));
-  };
-
-  handleSubmit = evt => {
-    evt.preventDefault();
-    const { name, number, contacts } = this.state;
+  handleSubmit = ({ number, name }) => {
+    const { contacts } = this.state;
 
     if (contacts.map(item => item.name).includes(name)) {
       Swal.fire('El contacto ya existe!');
+      return
     }
     else if (contacts.map(item => item.number).includes(number)) {
       Swal.fire('Este numero ya esta agregado!');
+      return
     }
-    else {
-      const id = "id-" + contacts.length + "-" + nanoid(2);
-      this.setState( prevState => ({
-        contacts: [...prevState.contacts, {id, name, number}],
-      }));
-    }
-    this.handleReset(evt);
+
+    const id = "id-" + contacts.length + "-" + nanoid(2);
+    this.setState( prevState => ({
+      contacts: [...prevState.contacts, {id, name, number}],
+    }));
+    
   };
 
   handleFilter(evt) {
@@ -108,8 +87,6 @@ export class App extends Component {
     return (
       <div className={css.container}>
         <ContactForm
-          handleReset={this.handleReset}
-          handleChange={this.handleChange}
           handleSubmit={this.handleSubmit}
         />
         <Filter
