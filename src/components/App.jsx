@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import ContactForm from './ContactForm/ContactForm';
 import Filter from './Filter/Filter';
 import Swal from 'sweetalert2';
+import ContactsList from './ContactsList/ContactsList';
 
 
 export class App extends Component {
@@ -12,7 +13,6 @@ export class App extends Component {
     this.state = {
       contacts: [],
       filter: "",
-      contactsFiltered: [],
     };
 
     this.handleDelete = this.handleDelete.bind(this);
@@ -34,13 +34,11 @@ export class App extends Component {
   }
 
   componentDidUpdate( prevProps, prevState ) {
-    const { contacts } = this.state;
+    const { contacts, filter } = this.state;
     if(prevState.contacts !== contacts) {
       localStorage.setItem("contacts", JSON.stringify( contacts ));
     }
-    if(prevState.filter !== "") {
-      this.setContacts();
-    }
+    if( (prevState.filter !== filter) && (filter !== "") ) this.setContacts();
   }
 
 
@@ -51,7 +49,6 @@ export class App extends Component {
     this.setState( (prevState) => (
       {
         contacts: [...prevState.contacts.filter( item => item.name !== name )],
-        contactsFiltered: [...prevState.contactsFiltered.filter( item => item.name !== name )]
       }
     ));
     Swal.fire(`${name} eliminado!`);
@@ -76,30 +73,29 @@ export class App extends Component {
     
   };
 
-  handleFilter(filter) {
-    this.setState({ filter });
-    /* const { contacts } = this.state;
-    const aux = contacts.filter(item =>
-      item.name.toLowerCase().includes(value.toLowerCase())
-    );
-    this.setState({ contactsFiltered: aux }); */
-  }
+  handleFilter(filter) { this.setState({ filter }); }
 
   setContacts(){
-    console.log('Cambios en el filtro');
+    const { contacts, filter } = this.state;
+    const aux = contacts.filter(item =>
+      item.name.toLowerCase().includes(filter.toLowerCase())
+    );
+    if(aux !== "") return aux
+    else return contacts
   }
 
   //------------------------------------------------------------------------
   //------------------- METODO RENDER
   render() {
+    const contacts = this.setContacts();
     return (
       <div className={css.container}>
         <ContactForm
           handleSubmit={this.handleSubmit}
         />
-        <Filter
-          {...this.state}
-          handleFilter={this.handleFilter}
+        <Filter handleFilter={this.handleFilter} />
+        <ContactsList
+          contacts={contacts}
           handleDelete={this.handleDelete}
         />
       </div>
